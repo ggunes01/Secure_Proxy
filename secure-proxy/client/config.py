@@ -24,10 +24,17 @@ class ClientConfig:
         if not token:
             raise ConfigError("PROXY_AUTH_TOKEN must be set")
 
+        server_host = (
+            os.getenv("PROXY_SERVER_HOST")
+            or os.getenv("AWS_PROXY_HOST")
+            or os.getenv("AWS_PUBLIC_IP")
+            or "127.0.0.1"
+        )
+
         return cls(
             listen_host=os.getenv("CLIENT_LISTEN_HOST", "127.0.0.1"),
             listen_port=int(os.getenv("CLIENT_LISTEN_PORT", "8080")),
-            server_host=os.getenv("PROXY_SERVER_HOST", "127.0.0.1"),
+            server_host=server_host.strip(),
             server_port=int(os.getenv("PROXY_SERVER_PORT", "9000")),
             auth_token=token,
             connect_timeout_seconds=float(os.getenv("CONNECT_TIMEOUT_SECONDS", "10")),
